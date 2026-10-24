@@ -43,7 +43,7 @@ function getSubtotal() {
 
 function getDiscount(subtotal) {
   if (!promoPercent) return 0;
-  return promoPercent;
+  return Math.round(subtotal * promoPercent / 100);
 }
 
 function renderCart() {
