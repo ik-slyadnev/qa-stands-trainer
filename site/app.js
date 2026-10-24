@@ -6,6 +6,8 @@ const PRODUCTS = [
 ];
 
 const PROMO_CODES = { SALE10: 10 };
+const DELIVERY_PRICE = 300;
+const FREE_DELIVERY_FROM = 3000;
 
 const cart = {};
 let promoPercent = 0;
@@ -69,8 +71,10 @@ function renderCart() {
   const subtotal = getSubtotal();
   const discount = getDiscount(subtotal);
   document.getElementById("subtotal").textContent = formatPrice(subtotal);
+  const delivery = subtotal === 0 || subtotal >= FREE_DELIVERY_FROM ? 0 : DELIVERY_PRICE;
   document.getElementById("discount").textContent = formatPrice(discount);
-  document.getElementById("total").textContent = formatPrice(subtotal - discount);
+  document.getElementById("delivery").textContent = delivery === 0 && subtotal > 0 ? "бесплатно" : formatPrice(delivery);
+  document.getElementById("total").textContent = formatPrice(subtotal - discount + delivery);
 }
 
 function applyPromo() {
