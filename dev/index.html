@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QA Shop</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <h1>QA Shop</h1>
+    <span id="stand-badge" class="badge">стенд не определён</span>
+  </header>
+
+  <main class="layout">
+    <section>
+      <h2>Товары</h2>
+      <div id="products" class="products"></div>
+    </section>
+
+    <section class="cart">
+      <h2>Корзина</h2>
+      <div id="cart-items" class="cart-items"><p class="empty">Корзина пуста</p></div>
+
+      <div class="promo">
+        <input id="promo-input" type="text" placeholder="Промокод">
+        <button id="promo-apply" type="button">Применить</button>
+      </div>
+      <p id="promo-message" class="promo-message"></p>
+
+      <div class="summary">
+        <div><span>Товары:</span> <span id="subtotal">0 ₽</span></div>
+        <div><span>Скидка:</span> <span id="discount">0 ₽</span></div>
+        <div class="total"><span>Итого:</span> <span id="total">0 ₽</span></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    Сборка: <span id="build-info">локальная версия</span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
