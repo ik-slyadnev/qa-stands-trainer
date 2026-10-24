@@ -31,13 +31,16 @@ function addToCart(id) {
 
 function changeQty(id, delta) {
   cart[id] = cart[id] + delta;
+  if (cart[id] < 1) {
+    delete cart[id];
+  }
   renderCart();
 }
 
 function getSubtotal() {
   return Object.entries(cart).reduce((sum, [id, qty]) => {
     const product = PRODUCTS.find((p) => p.id === Number(id));
-    return sum + product.price * qty;
+    return sum + product.price;
   }, 0);
 }
 
