@@ -1,0 +1,7 @@
+{
+  "version": "2026.10-rc2",
+  "stand": "stage",
+  "branch": "bugfix/SHOP-101-promo-total",
+  "commit": "cd2bb9b",
+  "deployed_at": "2026-10-24 13:53 UTC"
+}
