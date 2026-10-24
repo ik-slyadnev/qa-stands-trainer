@@ -1,0 +1,75 @@
+name: Раскатка ветки на стенд
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Какую ветку раскатить (например, bugfix/SHOP-101-promo-total)"
+        required: true
+        default: "main"
+      stand:
+        description: "На какой стенд"
+        required: true
+        type: choice
+        options:
+          - dev
+          - stage
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gh-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Забираем код ветки ${{ inputs.branch }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Собираем сборку и записываем её версию
+        run: |
+          mkdir -p public/${{ inputs.stand }}
+          cp -r site/* public/${{ inputs.stand }}/
+          VERSION="$(date -u +%Y.%m)-rc${{ github.run_number }}"
+          cat > public/${{ inputs.stand }}/version.json <<EOF
+          {
+            "version": "${VERSION}",
+            "stand": "${{ inputs.stand }}",
+            "branch": "${{ inputs.branch }}",
+            "commit": "$(git rev-parse --short HEAD)",
+            "deployed_at": "$(date -u +'%Y-%m-%d %H:%M UTC')"
+          }
+          EOF
+          cat > public/index.html <<'EOF'
+          <!DOCTYPE html>
+          <html lang="ru"><head><meta charset="UTF-8"><title>QA Shop: стенды</title></head>
+          <body style="font-family: sans-serif; padding: 32px">
+            <h1>Стенды QA Shop</h1>
+            <ul>
+              <li><a href="dev/">DEV</a> (<a href="dev/version.json">версия</a>)</li>
+              <li><a href="stage/">STAGE</a> (<a href="stage/version.json">версия</a>)</li>
+            </ul>
+          </body></html>
+          EOF
+          echo "Сборка ${VERSION} из ветки ${{ inputs.branch }} готовится к раскатке на ${{ inputs.stand }}"
+
+      - name: Раскатываем на стенд ${{ inputs.stand }}
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          keep_files: true
+          commit_message: "Раскатка ${{ inputs.branch }} на ${{ inputs.stand }}"
+
+      - name: Где смотреть результат
+        run: |
+          OWNER="${GITHUB_REPOSITORY%%/*}"
+          REPO="${GITHUB_REPOSITORY##*/}"
+          echo "Стенд: https://${OWNER}.github.io/${REPO}/${{ inputs.stand }}/" >> "$GITHUB_STEP_SUMMARY"
+          echo "Версия сборки: https://${OWNER}.github.io/${REPO}/${{ inputs.stand }}/version.json" >> "$GITHUB_STEP_SUMMARY"
+          echo "GitHub Pages обновляется 1–2 минуты после раскатки." >> "$GITHUB_STEP_SUMMARY"
