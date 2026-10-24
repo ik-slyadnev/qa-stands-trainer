@@ -1,4 +1,5 @@
 name: Раскатка ветки на стенд
+run-name: Раскатка ${{ inputs.branch }} на ${{ inputs.stand }}
 
 on:
   workflow_dispatch:
